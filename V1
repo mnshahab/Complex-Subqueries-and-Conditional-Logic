@@ -1,0 +1,19 @@
+Query:
+SELECT 
+    e.employee_id,
+    e.name,
+    e.department_id,
+    s1.salary AS previous_salary,
+    s2.salary AS current_salary
+FROM 
+    employees e
+JOIN 
+    salaries s1 ON e.employee_id = s1.employee_id
+JOIN 
+    salaries s2 ON e.employee_id = s2.employee_id
+WHERE 
+    s1.salary_date = (SELECT MAX(salary_date) FROM salaries WHERE employee_id = e.employee_id AND salary_date < DATE_SUB(CURDATE(), INTERVAL 1 YEAR))
+    AND s2.salary_date = (SELECT MAX(salary_date) FROM salaries WHERE employee_id = e.employee_id)
+    AND s2.salary > s1.salary
+ORDER BY 
+    e.employee_id;
